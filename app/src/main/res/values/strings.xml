@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VictorCam</string>
+    <string name="disclosure_title">Intended use</string>
+    <string name="disclosure_body">VictorCam is a virtual camera feed tool for privacy testing, streaming demos, and playing back user-owned content into apps that use Camera2 or CameraX.\n\nIt is NOT for fraud, KYC or biometric bypass, impersonation, or any deceptive identity presentation. Use only with content you own or have rights to, and only in contexts where a virtual camera is appropriate and permitted.</string>
+    <string name="disclosure_accept">I understand — continue</string>
+    <string name="main_title">VictorCam</string>
+    <string name="pick_source">Choose feed source</string>
+    <string name="preview">Preview</string>
+    <string name="source_video">Video file</string>
+    <string name="source_image">Still image</string>
+    <string name="source_loop">Looping clip</string>
+    <string name="source_screen">Screen region</string>
+    <string name="stub_status">Stub — not yet capturing</string>
+
+    <string name="capture_banner">User-owned content only — not for fraud, KYC/biometric bypass, or impersonation.</string>
+    <string name="capture_title">VictorCam capture</string>
+    <string name="capture_mode_image">Image capture request</string>
+    <string name="capture_mode_video">Video capture request</string>
+    <string name="capture_route_extra_output">Will write to EXTRA_OUTPUT:\n%1$s</string>
+    <string name="capture_route_result">No EXTRA_OUTPUT — result Intent will carry a thumbnail / content Uri.</string>
+    <string name="capture_pick">Pick user-owned media</string>
+    <string name="capture_use_feed">Use demo feed placeholder</string>
+    <string name="capture_cancel">Cancel</string>
+
+    <string name="screen_capture_notif_title">VictorCam screen capture</string>
+    <string name="screen_capture_notif_text">Capturing a screen region for the virtual feed (user-owned / demo use).</string>
+    <string name="hook_optin_title">Advanced: root / LSPosed Camera2 hook</string>
+    <string name="hook_optin_warnings">HARD WARNINGS\n\n• Root / LSPosed can brick or compromise your device.\n• This path is OFF by default and requires explicit opt-in.\n• User-owned content only — NOT for fraud, KYC/biometric bypass, or impersonation.\n• Banking, payment, government ID, and KYC apps are hard-denylisted and cannot be hooked.\n• Scope is per-app opt-in only.</string>
+    <string name="hook_optin_open">Advanced LSPosed hook (optional)</string>
+
+    <string name="feed_switch_title">VictorCam feed</string>
+    <string name="feed_switch_text">Active preset: %1$s</string>
+    <string name="feed_switch_next">Next</string>
+    <string name="feed_switch_prev">Prev</string>
+    <string name="audio_limits">Stock Android: audio plays for preview / our capture intents only. System mic replace needs root/LSPosed.</string>
+</resources>

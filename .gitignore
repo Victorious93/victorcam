@@ -1,0 +1,32 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+.navigation/
+*.log
+
+# Keystores — never commit
+*.jks
+*.keystore
+local.properties
+
+# App build outputs
+app/build/
+
+# Module build outputs
+xposed/build/
+**/build/
+.kotlin/
