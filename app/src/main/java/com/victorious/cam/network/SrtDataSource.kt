@@ -16,13 +16,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * SRT-oriented [DataSource] for Media3 ProgressiveMediaSource (MPEG-TS payloads).
  *
- * **What works today:** caller-mode UDP ingest of MPEG-TS from `srt://host:port`
- * (and `udp://` style host/port parsing). Suitable for lab TS feeds.
+ * **Shipped path (certainty: Medium):** caller-mode UDP ingest of MPEG-TS from
+ * `srt://host:port[?options]`. Suitable for lab TS feeds.
  *
- * **Remaining gaps (documented):** full SRT handshake, encryption (passphrase),
- * latency/linger options, rendezvous mode, and libsrt native reliability are
- * **not** implemented here — no permissively redistributable libsrt AAR is
- * vendored. For production SRT, swap [Factory] for a libsrt-backed DataSource.
+ * **Not shipped (certainty: Low / N/A):** full libsrt handshake, AES encryption,
+ * rendezvous/listener modes. Options are parsed via [SrtOptions] for a future
+ * libsrt drop-in — see docs/SRT.md. No free Maven-published libsrt AAR found.
  */
 @UnstableApi
 class SrtDataSource : BaseDataSource(/* isNetwork= */ true) {
@@ -34,14 +33,35 @@ class SrtDataSource : BaseDataSource(/* isNetwork= */ true) {
     private var pending: ByteArray? = null
     private var pendingOffset = 0
 
+    private var options: SrtOptions? = null
+
     override fun open(dataSpec: DataSpec): Long {
         val u = dataSpec.uri
         uri = u
-        val host = u.host ?: throw IOException("SRT URL missing host")
-        val port = if (u.port > 0) u.port else 9000
+        val opts = SrtOptions.parse(u.toString())
+            ?: run {
+                val host = u.host ?: throw IOException("SRT URL missing host")
+                val port = if (u.port > 0) u.port else 9000
+                SrtOptions(host, port)
+            }
+        options = opts
+        if (opts.mode != SrtOptions.Mode.CALLER) {
+            throw IOException(
+                "SRT mode=${opts.mode} requires native libsrt (not bundled). " +
+                    "Use mode=caller with a plain MPEG-TS UDP peer, or see docs/SRT.md."
+            )
+        }
+        if (!opts.passphrase.isNullOrEmpty()) {
+            // Parsed but not applied — surface clearly rather than silently drop security.
+            throw IOException(
+                "SRT passphrase set but encryption is not implemented without libsrt. " +
+                    "Remove passphrase for the TS-over-UDP path, or see docs/SRT.md."
+            )
+        }
         val sock = DatagramSocket()
-        sock.soTimeout = 5000
-        sock.connect(InetSocketAddress(InetAddress.getByName(host), port))
+        // latency option used only as a receive timeout hint on the UDP path
+        sock.soTimeout = (opts.latencyMs * 10).coerceIn(1000, 15000)
+        sock.connect(InetSocketAddress(InetAddress.getByName(opts.host), opts.port))
         // Send a minimal probe so caller-mode sources that wait for traffic wake up.
         try {
             sock.send(DatagramPacket(ByteArray(1), 1))
@@ -105,16 +125,7 @@ class SrtDataSource : BaseDataSource(/* isNetwork= */ true) {
 
     companion object {
         /** Parses host/port from srt:// URLs (java.net — JVM unit-test safe). */
-        fun parseEndpoint(url: String): Pair<String, Int>? {
-            return try {
-                val u = java.net.URI(url.trim())
-                if (u.scheme?.lowercase() != "srt") return null
-                val host = u.host ?: return null
-                val port = if (u.port > 0) u.port else 9000
-                host to port
-            } catch (_: Exception) {
-                null
-            }
-        }
+        fun parseEndpoint(url: String): Pair<String, Int>? =
+            SrtOptions.parse(url)?.let { it.host to it.port }
     }
 }
