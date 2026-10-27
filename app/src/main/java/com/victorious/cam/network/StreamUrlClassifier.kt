@@ -5,12 +5,13 @@ package com.victorious.cam.network
  */
 object StreamUrlClassifier {
     enum class Kind {
-        RTSP, RTMP, SRT, HTTP, HLS, DASH, NDI, UNSUPPORTED
+        RTSP, RTMP, SRT, HTTP, HLS, DASH, NDI, NDI_RTP, UNSUPPORTED
     }
 
     fun classify(raw: String): Kind {
         val u = raw.trim().lowercase()
         return when {
+            u.startsWith("ndi+rtp://") || u.startsWith("rtp://") -> Kind.NDI_RTP
             u.startsWith("ndi://") || u.startsWith("ndi:") -> Kind.NDI
             u.startsWith("rtsp://") -> Kind.RTSP
             u.startsWith("rtmp://") || u.startsWith("rtmps://") -> Kind.RTMP
@@ -23,7 +24,7 @@ object StreamUrlClassifier {
     }
 
     fun isPlayable(kind: Kind): Boolean = when (kind) {
-        Kind.RTSP, Kind.RTMP, Kind.SRT, Kind.HTTP, Kind.HLS, Kind.DASH -> true
+        Kind.RTSP, Kind.RTMP, Kind.SRT, Kind.HTTP, Kind.HLS, Kind.DASH, Kind.NDI_RTP -> true
         Kind.NDI, Kind.UNSUPPORTED -> false
     }
 

@@ -19,6 +19,8 @@ object FeedSourceFactory {
         FeedSourceKind.LOOPING_CLIP -> LoopingClipFeedSource(context)
         FeedSourceKind.SCREEN_REGION -> ScreenRegionFeedSource(context)
         FeedSourceKind.NETWORK_STREAM -> NetworkStreamFeedSource(context)
+        FeedSourceKind.MULTI_FEED_MIX ->
+            error("MULTI_FEED_MIX is produced by MultiFeedMixer, not FeedSourceFactory")
     }
 
     fun bindAll(sources: List<FeedSource>, pipeline: FramePipeline) {

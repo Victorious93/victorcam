@@ -14,11 +14,12 @@ import com.victorious.cam.pipeline.FramePipeline
  * - RTSP / HTTP(S) / HLS / DASH — Media3 defaults
  * - RTMP / RTMPS — Media3 [RtmpDataSource]
  * - SRT — [SrtDataSource] (MPEG-TS UDP path; see gaps in that class)
- * - NDI — not bundled
+ * - NDI — proprietary SDK not bundled; [NdiRtpBridge] maps ndi:// / ndi+rtp://
  */
 class NetworkStreamFeedSource(
     private val context: Context? = null,
-    private var url: String? = null
+    private var url: String? = null,
+    private var ndiGateway: Map<String, String> = emptyMap()
 ) : FeedSource {
     override val id: String = FeedSourceKind.NETWORK_STREAM.toDefaultId()
     override val displayName: String = "Network stream"
@@ -31,6 +32,7 @@ class NetworkStreamFeedSource(
 
     fun setUrl(value: String?) { url = value }
     fun getUrl(): String? = url
+    fun setNdiGateway(map: Map<String, String>) { ndiGateway = map }
 
     override fun bindPipeline(pipeline: FramePipeline) {
         this.pipeline = pipeline
@@ -43,18 +45,25 @@ class NetworkStreamFeedSource(
         if (u.isEmpty()) {
             return Result.failure(IllegalStateException("No stream URL"))
         }
+        var playUrl = u
         val kind = StreamUrlClassifier.classify(u)
         if (kind == StreamUrlClassifier.Kind.UNSUPPORTED) {
             return Result.failure(IllegalArgumentException("Unsupported URL scheme: $u"))
         }
-        if (kind == StreamUrlClassifier.Kind.NDI) {
-            return Result.failure(IllegalStateException("NDI is not bundled — see README TODO"))
+        if (NdiRtpBridge.isNdiFamily(u)) {
+            val resolved = NdiRtpBridge.resolve(u, ndiGateway)
+                ?: return Result.failure(
+                    IllegalStateException(
+                        "NDI source not resolvable. Configure a gateway map or use ndi+rtp://host:port. See docs/NDI.md"
+                    )
+                )
+            playUrl = resolved.playableUrl
         }
         val pipe = pipeline ?: return Result.failure(IllegalStateException("Pipeline not bound"))
         val p = player
         if (p != null) {
             pipe.start()
-            p.playUri(Uri.parse(u), loop = false)
+            p.playUri(Uri.parse(playUrl), loop = false)
         }
         active = true
         return Result.success(Unit)
@@ -67,5 +76,5 @@ class NetworkStreamFeedSource(
 
     override fun isActive(): Boolean = active
     override fun statusLine(): String =
-        if (active) "Streaming: ${url ?: ""}" else "Idle — enter RTSP/HTTP/RTMP/SRT URL"
+        if (active) "Streaming: ${url ?: ""}" else "Idle — enter RTSP/HTTP/RTMP/SRT/NDI-RTP URL"
 }

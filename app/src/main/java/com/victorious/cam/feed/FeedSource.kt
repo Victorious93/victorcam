@@ -31,7 +31,9 @@ enum class FeedSourceKind {
     IMAGE,
     LOOPING_CLIP,
     SCREEN_REGION,
-    NETWORK_STREAM
+    NETWORK_STREAM,
+    /** Logical multi-source PiP / grid mixer output. */
+    MULTI_FEED_MIX
 }
 
 fun FeedSourceKind.toDefaultId(): String = when (this) {
@@ -40,4 +42,5 @@ fun FeedSourceKind.toDefaultId(): String = when (this) {
     FeedSourceKind.LOOPING_CLIP -> "looping_clip"
     FeedSourceKind.SCREEN_REGION -> "screen_region"
     FeedSourceKind.NETWORK_STREAM -> "network_stream"
+    FeedSourceKind.MULTI_FEED_MIX -> "multi_feed_mix"
 }

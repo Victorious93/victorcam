@@ -68,12 +68,10 @@ class VictorCamCameraHook {
      * Package-visible for unit tests via [substituteImageForTest].
      */
     fun substituteImage(packageName: String, image: Image): Boolean {
-        val decision = FrameSubstitutionEngine.shouldSubstitute(
-            packageName,
-            FeedFrameBuffer.hasFrame()
-        )
+        val has = SharedFrameTransport.hasFrame() || FeedFrameBuffer.hasFrame()
+        val decision = FrameSubstitutionEngine.shouldSubstitute(packageName, has)
         if (!decision.substituted) return false
-        val frame = FeedFrameBuffer.snapshot() ?: return false
+        val frame = SharedFrameTransport.snapshot() ?: FeedFrameBuffer.snapshot() ?: return false
         val rgba = FrameSubstitutionEngine.materializeRgba(frame, image.width, image.height)
         return writeRgbaToImage(image, rgba)
     }

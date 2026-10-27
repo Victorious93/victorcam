@@ -120,6 +120,7 @@ class AudioFeedController(context: Context) {
 
 /**
  * Documents / computes whether virtual-mic injection is available.
+ * See [RootVirtualMicInjector] for the gated Magisk/root path.
  */
 object VirtualMicCapability {
     enum class Level { PREVIEW_ONLY, CAPTURE_INTENT_AUDIO, SYSTEM_MIC_REPLACE }
@@ -134,6 +135,7 @@ object VirtualMicCapability {
         Level.CAPTURE_INTENT_AUDIO ->
             "Can mux audio into IMAGE/VIDEO capture results we produce."
         Level.SYSTEM_MIC_REPLACE ->
-            "Root/LSPosed required to appear as the system microphone to other apps."
+            "Root/Magisk + LSPosed required to appear as the system microphone to other apps. " +
+                "Same opt-in + denylist as camera hooks; OFF by default."
     }
 }
