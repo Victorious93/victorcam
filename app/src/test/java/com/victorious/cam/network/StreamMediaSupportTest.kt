@@ -14,6 +14,7 @@ class StreamMediaSupportTest {
         assertTrue(StreamMediaSourceFactory.supportsFully(StreamUrlClassifier.Kind.SRT))
         assertTrue(StreamMediaSourceFactory.supportsFully(StreamUrlClassifier.Kind.RTSP))
         assertFalse(StreamMediaSourceFactory.supportsFully(StreamUrlClassifier.Kind.NDI))
+        assertTrue(StreamMediaSourceFactory.supportsFully(StreamUrlClassifier.Kind.NDI_RTP))
     }
 
     @Test

@@ -28,13 +28,16 @@ object StreamMediaSourceFactory {
             StreamUrlClassifier.Kind.RTSP ->
                 RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(uri))
             StreamUrlClassifier.Kind.SRT -> srtSource(uri)
+            StreamUrlClassifier.Kind.NDI_RTP -> rtpSource(uri)
             StreamUrlClassifier.Kind.HTTP,
             StreamUrlClassifier.Kind.HLS,
             StreamUrlClassifier.Kind.DASH ->
                 DefaultMediaSourceFactory(context).createMediaSource(MediaItem.fromUri(uri))
             StreamUrlClassifier.Kind.NDI,
             StreamUrlClassifier.Kind.UNSUPPORTED ->
-                throw IllegalArgumentException("Unsupported stream: $url")
+                throw IllegalArgumentException(
+                    "Unsupported stream: $url (native NDI SDK not bundled — use ndi+rtp:// or a gateway; see docs/NDI.md)"
+                )
         }
     }
 
@@ -50,5 +53,14 @@ object StreamMediaSourceFactory {
     private fun srtSource(uri: Uri): MediaSource {
         return ProgressiveMediaSource.Factory(SrtDataSource.Factory())
             .createMediaSource(MediaItem.fromUri(uri))
+    }
+
+    /** RTP / NDI-over-RTP: reuse TS-over-UDP DataSource with rtp host/port. */
+    private fun rtpSource(uri: Uri): MediaSource {
+        val host = uri.host ?: throw IllegalArgumentException("RTP URL missing host")
+        val port = if (uri.port > 0) uri.port else 5004
+        val srtStyle = android.net.Uri.parse("srt://$host:$port")
+        return ProgressiveMediaSource.Factory(SrtDataSource.Factory())
+            .createMediaSource(MediaItem.fromUri(srtStyle))
     }
 }
