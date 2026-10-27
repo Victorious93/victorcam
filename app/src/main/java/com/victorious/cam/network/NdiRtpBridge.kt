@@ -33,10 +33,11 @@ object NdiRtpBridge {
                 )
             }
             lower.startsWith("ndi://") || lower.startsWith("ndi:") -> {
-                val name = trimmed.substringAfter("://", "")
-                    .substringAfter("ndi:", "")
-                    .trim('/')
-                    .trim()
+                val name = when {
+                    "://" in trimmed -> trimmed.substringAfter("://")
+                    trimmed.lowercase().startsWith("ndi:") -> trimmed.substringAfter(":")
+                    else -> ""
+                }.trim().trim('/')
                 if (name.isEmpty()) return null
                 val mapped = gateway.entries.firstOrNull {
                     it.key.equals(name, ignoreCase = true)

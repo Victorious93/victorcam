@@ -51,10 +51,10 @@ class MultiFeedMixerTest {
         )
         assertEquals(64, out.width)
         assertEquals(48, out.height)
-        // Primary fills most of the frame
-        assertEquals(Color.RED, out.getPixel(1, 1))
-        // Inset corner should be blue-ish
-        assertEquals(Color.BLUE, out.getPixel(60, 44))
+        // Primary fills most of the frame (Robolectric software canvas)
+        assertEquals(Color.RED, out.getPixel(2, 2))
+        // Inset bottom-right should be blue
+        assertEquals(Color.BLUE, out.getPixel(58, 42))
     }
 
     @Test

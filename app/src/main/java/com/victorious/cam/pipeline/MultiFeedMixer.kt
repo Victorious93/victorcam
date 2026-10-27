@@ -49,15 +49,17 @@ class MultiFeedMixer(
         for (slot in slots) {
             val layer = byId[slot.sourceId] ?: continue
             if (layer.bitmap.isRecycled) continue
-            val dst = RectF(
-                slot.left * outputWidth,
-                slot.top * outputHeight,
-                slot.right * outputWidth,
-                slot.bottom * outputHeight
+            val dst = Rect(
+                (slot.left * outputWidth).toInt(),
+                (slot.top * outputHeight).toInt(),
+                (slot.right * outputWidth).toInt(),
+                (slot.bottom * outputHeight).toInt()
             )
             val src = Rect(0, 0, layer.bitmap.width, layer.bitmap.height)
             canvas.drawBitmap(layer.bitmap, src, dst, null)
-            if (slot.zIndex > 0) canvas.drawRect(dst, border)
+            if (slot.zIndex > 0) {
+                canvas.drawRect(RectF(dst), border)
+            }
         }
         if (overlay != null && overlay.anyEnabled()) {
             val composed = overlayCompositor.compose(out, overlay, logo)
