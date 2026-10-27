@@ -40,7 +40,7 @@ class SharedFrameTransportTest {
         assertFalse(SharedFrameTransport.publish(b))
         val stats = SharedFrameTransport.stats()
         assertEquals(1L, stats.droppedBackpressure)
-        assertEquals(2, SharedFrameTransport.snapshot()!!.bytes[0])
+        assertEquals(2.toByte(), SharedFrameTransport.snapshot()!!.bytes[0])
     }
 
     @Test
