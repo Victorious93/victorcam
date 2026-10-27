@@ -280,7 +280,7 @@ fun MainScreen(onOpenAdvancedHook: () -> Unit = {}) {
                                     com.victorious.cam.feed.FeedSourceKind.LOOPING_CLIP -> "looping_clip"
                                     com.victorious.cam.feed.FeedSourceKind.SCREEN_REGION -> "screen_region"
                                     com.victorious.cam.feed.FeedSourceKind.NETWORK_STREAM -> "network_stream"
-                                    FeedSourceKind.MULTI_FEED_MIX -> "multi_feed_mix"
+                                    com.victorious.cam.feed.FeedSourceKind.MULTI_FEED_MIX -> "multi_feed_mix"
                                 }
                             }) {
                             null -> error = "Preset source missing"
