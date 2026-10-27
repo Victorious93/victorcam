@@ -95,9 +95,6 @@ object SharedFrameTransport {
         buf.putInt(frame.format.ordinal)
         buf.putInt(payload.size)
         buf.putLong(frame.timestampNs)
-        // pad to HEADER_BYTES if needed — current fields = 4+4+8+4+4+4+4+8 = 40? Wait recount
-        // We declared HEADER_BYTES=32 — fix layout to fit 32:
-        // Actually let's use HEADER_BYTES = 40 consistently. Adjusting in companion.
         buf.put(payload)
         slot.set(buf.array())
         // Mirror into legacy in-process buffer for existing hooks

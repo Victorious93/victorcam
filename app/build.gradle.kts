@@ -15,8 +15,8 @@ android {
         applicationId = "com.victorious.cam"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.3.0-features-2"
+        versionCode = 4
+        versionName = "0.4.0-features-3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
