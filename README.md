@@ -15,7 +15,8 @@ OBS-style **virtual camera feed** for Android (Camera2 / CameraX consumers).
 | Still image | Bitmap decode → pipeline |
 | Looping clip | ExoPlayer `REPEAT_MODE_ONE` |
 | Screen region | MediaProjection + foreground service + crop rect |
-| Network stream | RTSP / HTTP(S) / HLS via Media3; RTMP/SRT best-effort |
+| Network stream | RTSP / HTTP(S) / HLS / RTMP; SRT TS-over-UDP; NDI-over-RTP fallback |
+| Multi-feed PiP | `MultiFeedMixer` composes 2+ sources → pipeline / overlays / recorder |
 
 Overlays (text, logo, timestamp) composite onto frames. Feed presets persist in Room.
 
@@ -28,47 +29,23 @@ Privacy testing, streaming demos, **user-owned** content only.
 
 `CaptureHandlerActivity` handles `IMAGE_CAPTURE` / `VIDEO_CAPTURE` / `STILL_IMAGE_CAMERA`.
 
-## Network / NDI
-
-- **Supported:** `rtsp://`, `http(s)://`, HLS (`.m3u8`), DASH (`.mpd`); RTMP/SRT URLs are accepted and attempted via ExoPlayer (device/extension dependent).
-- **NDI:** **TODO** — no permissively licensed NDI mobile SDK is vendored here. Do not expect `ndi://` to play.
-
-## Optional advanced path: root / LSPosed (`:xposed`)
-
-Separate Gradle module **`xposed`** (OFF by default):
-
-- Explicit in-app opt-in screen with hard warnings
-- Per-app allow list only
-- **Hardcoded denylist** refuses banking, payment, government ID, and KYC/identity packages (exact names + category tokens). See `HookDenylist` and tests.
-- No hook runs unless master gate is enabled **and** package is opted in **and** not denylisted
-
-Denylist examples (non-exhaustive): PayPal, Venmo, Cash App, Chase, BoA, Wells Fargo, Citi, Amex, IRS/gov tokens, Onfido, Jumio, Veriff, Socure, Persona, Sumsub, packages containing `bank`, `kyc`, `wallet`, `payment`, etc.
-
-
-## Network ingest (features-2)
+## Network / SRT / NDI
 
 | Scheme | Implementation | Certainty |
 |--------|----------------|-----------|
-| RTMP/RTMPS | Media3 `media3-datasource-rtmp` (`RtmpDataSource`) | High for progressive FLV/RTMP that Media3 supports |
-| SRT | In-tree `SrtDataSource` (MPEG-TS over UDP caller path) | **Medium/Low** — no full libsrt handshake/encryption; lab TS feeds only |
+| RTMP/RTMPS | Media3 `RtmpDataSource` | High |
+| SRT | `SrtDataSource` MPEG-TS over UDP (caller); options parsed | **Medium** lab TS; **Low** full libsrt (not vendored) — [docs/SRT.md](docs/SRT.md) |
 | RTSP/HTTP/HLS/DASH | Media3 defaults | High |
-| NDI | Not bundled | N/A |
+| NDI | Proprietary SDK **not** bundled; `ndi+rtp://` / gateway map | **Medium** RTP/gateway; N/A native — [docs/NDI.md](docs/NDI.md) |
 
-## Virtual mic
+## Optional advanced path: root / LSPosed (`:xposed`)
 
-Stock Android cannot register VictorCam as the system microphone. `AudioFeedController` plays ExoPlayer/AudioTrack audio for **preview** and for **our** capture-intent results. System-wide mic replacement remains a root/LSPosed advanced path (not default).
+OFF by default. Cross-process frames use versioned `SharedFrameTransport` (backpressure).
 
-## Recording & trim
-
-`FeedRecorder` encodes composed pipeline frames to MP4 (MediaCodec surface input). `FeedTrimmer` does keyframe-aligned remux trim via MediaExtractor/MediaMuxer.
-
-## Scheduling / hotkeys
-
-WorkManager + AlarmManager schedule preset switches; notification actions provide Next/Prev quick-switch (`FeedSwitchBus`).
-
-## Backup
-
-`PresetBackup` exports/imports JSON or zip (logos/) for SAF share/restore.
+- Explicit in-app opt-in + hard warnings
+- Per-app allow list only
+- **Hardcoded denylist** refuses banking, payment, government ID, and KYC packages
+- Virtual mic system inject: [docs/VIRTUAL_MIC.md](docs/VIRTUAL_MIC.md) (stock limitation unchanged without root)
 
 ## Build
 
@@ -76,4 +53,6 @@ WorkManager + AlarmManager schedule preset switches; notification actions provid
 ./gradlew assembleDebug test
 ```
 
-Debug keystore: `keystore/victorcam-debug.jks` (password `android`, alias `victorcamdebug`). No release keys.
+Debug signing: optional local keystore via `local.properties` /
+`VICTORCAM_DEBUG_*` env vars (see `keystore/README.md`). Keystores and
+`local.properties` are gitignored — never commit passwords or `*.jks`.
