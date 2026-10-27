@@ -55,8 +55,23 @@ class MultiFeedMixer(
                 (slot.right * outputWidth).toInt(),
                 (slot.bottom * outputHeight).toInt()
             )
-            val src = Rect(0, 0, layer.bitmap.width, layer.bitmap.height)
-            canvas.drawBitmap(layer.bitmap, src, dst, null)
+            if (dst.width() == outputWidth && dst.height() == outputHeight &&
+                layer.bitmap.width == outputWidth && layer.bitmap.height == outputHeight
+            ) {
+                val pixels = IntArray(outputWidth * outputHeight)
+                layer.bitmap.getPixels(pixels, 0, outputWidth, 0, 0, outputWidth, outputHeight)
+                out.setPixels(pixels, 0, outputWidth, 0, 0, outputWidth, outputHeight)
+            } else {
+                val src = Rect(0, 0, layer.bitmap.width, layer.bitmap.height)
+                // Scale via createScaledBitmap for Robolectric-safe blit
+                val dw = dst.width().coerceAtLeast(1)
+                val dh = dst.height().coerceAtLeast(1)
+                val scaled = Bitmap.createScaledBitmap(layer.bitmap, dw, dh, true)
+                val pixels = IntArray(dw * dh)
+                scaled.getPixels(pixels, 0, dw, 0, 0, dw, dh)
+                out.setPixels(pixels, 0, dw, dst.left, dst.top, dw, dh)
+                if (scaled !== layer.bitmap && !scaled.isRecycled) scaled.recycle()
+            }
             if (slot.zIndex > 0) {
                 canvas.drawRect(RectF(dst), border)
             }
