@@ -16,6 +16,11 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <!-- Package visibility for VictorLaunch fleet theme provider (read-only). -->
+    <queries>
+        <package android:name="com.victorious.launch" />
+    </queries>
+
     <application
         android:name=".VictorCamApp"
         android:allowBackup="true"
@@ -66,6 +71,13 @@
             <intent-filter>
                 <action android:name="com.victorious.cam.action.HOTKEY_NEXT" />
                 <action android:name="com.victorious.cam.action.HOTKEY_PREV" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".fleettheme.FleetThemeChangedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.victorious.launch.action.FLEET_THEME_CHANGED" />
             </intent-filter>
         </receiver>
     </application>
