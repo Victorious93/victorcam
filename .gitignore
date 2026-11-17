@@ -18,9 +18,10 @@ out/
 .navigation/
 *.log
 
-# Keystores — never commit
+# Keystores — never commit release keys. The fleet debug keystore below is the only exception.
 *.jks
 *.keystore
+!keystore/victorcam-debug.jks
 local.properties
 
 # App build outputs

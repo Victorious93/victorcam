@@ -1,20 +1,15 @@
-# Local debug keystore
+# VictorCam debug keystore
 
-Keystores are never committed (`*.jks` / `*.keystore` are gitignored).
-Without a keystore here, debug builds use Android's default debug signing.
+`victorcam-debug.jks` is VictorCam's fixed **debug** signing key. It is committed on purpose so every debug build, local or CI, is signed with the same certificate:
 
-To use a stable local debug key:
+- Alias: `victorcamdebug`
+- Certificate SHA-256: `8B:56:F8:18:93:B2:4F:02:BC:6C:93:39:39:36:32:3E:C5:74:86:D9:34:E2:9B:73:7C:E1:A7:B4:24:C5:B6:0D`
 
-```sh
-keytool -genkeypair -v -keystore keystore/victorcam-debug.jks \
-  -alias victorcamdebug -keyalg RSA -keysize 2048 -validity 10000
-```
+Its passwords are **not** in git. Provide them one of two ways:
 
-Then put the passwords in `local.properties` (which is gitignored):
+- `local.properties`: `victorcam.debug.storePassword=...` and `victorcam.debug.keyPassword=...`
+- Environment: `VICTORCAM_DEBUG_STORE_PASSWORD` and `VICTORCAM_DEBUG_KEY_PASSWORD` (CI reads these from repository secrets of the same names)
 
-```
-victorcam.debug.storePassword=<your store password>
-victorcam.debug.keyPassword=<your key password>
-```
+Without them, Gradle falls back to the default Android debug key, which produces a different certificate that fails the fleet theme pin and won't install over fleet builds.
 
-Or set env vars `VICTORCAM_DEBUG_STORE_PASSWORD` / `VICTORCAM_DEBUG_KEY_PASSWORD`.
+**Release keys are never committed to this repo.**

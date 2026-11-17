@@ -25,10 +25,12 @@ android {
         val f = rootProject.file("local.properties")
         if (f.exists()) f.inputStream().use { load(it) }
     }
-    val debugStorePassword = localProps.getProperty("victorcam.debug.storePassword")
-        ?: System.getenv("VICTORCAM_DEBUG_STORE_PASSWORD")
-    val debugKeyPassword = localProps.getProperty("victorcam.debug.keyPassword")
-        ?: System.getenv("VICTORCAM_DEBUG_KEY_PASSWORD")
+    // Fixed fleet debug keystore is committed; its passwords never are.
+    // Supply them via local.properties or VICTORCAM_DEBUG_* env vars (CI: repo secrets).
+    val debugStorePassword = (localProps.getProperty("victorcam.debug.storePassword")
+        ?: System.getenv("VICTORCAM_DEBUG_STORE_PASSWORD"))?.takeIf { it.isNotBlank() }
+    val debugKeyPassword = (localProps.getProperty("victorcam.debug.keyPassword")
+        ?: System.getenv("VICTORCAM_DEBUG_KEY_PASSWORD"))?.takeIf { it.isNotBlank() }
     val useCustomDebugKey = debugKeystore.exists() && debugStorePassword != null && debugKeyPassword != null
 
     signingConfigs {
