@@ -29,4 +29,14 @@ jobs:
         run: chmod +x gradlew
 
       - name: Assemble debug and run unit tests
+        # Debug passwords come from repo secrets, never from files in git.
+        # If the secrets are unset, the build falls back to the default Android debug key.
+        env:
+          VICTORCAM_DEBUG_STORE_PASSWORD: ${{ secrets.VICTORCAM_DEBUG_STORE_PASSWORD }}
+          VICTORCAM_DEBUG_KEY_PASSWORD: ${{ secrets.VICTORCAM_DEBUG_KEY_PASSWORD }}
         run: ./gradlew assembleDebug test --stacktrace
+
+      - name: Report debug signing cert
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs "$APK" | grep -E 'DN|SHA-256'
