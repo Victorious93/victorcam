@@ -1,0 +1,18 @@
+Third-party notices
+===================
+
+scrcpy
+------
+This repository includes documentation, in-app setup copy, and a PC helper
+script that invoke a user-installed copy of scrcpy:
+
+    https://github.com/Genymobile/scrcpy
+
+scrcpy is copyright Genymobile and contributors, and is licensed under the
+Apache License, Version 2.0:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+scrcpy is not vendored or redistributed in this repository. Only instructions
+and a wrapper that calls a scrcpy binary already present on the operator's
+Linux PC are included.

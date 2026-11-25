@@ -50,6 +50,8 @@ import com.victorious.cam.library.FeedLibraryDatabase
 import com.victorious.cam.library.FeedLibraryRepository
 import com.victorious.cam.library.FeedPreset
 import com.victorious.cam.network.NetworkStreamFeedSource
+import com.victorious.cam.scrcpy.ScrcpyFeedSource
+import com.victorious.cam.scrcpy.ScrcpyPrefs
 import com.victorious.cam.overlay.OverlayCompositor
 import com.victorious.cam.overlay.OverlayConfig
 import com.victorious.cam.overlay.OverlayPosition
@@ -60,8 +62,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen(onOpenAdvancedHook: () -> Unit = {}) {
+fun MainScreen(
+    onOpenAdvancedHook: () -> Unit = {},
+    onOpenScrcpySetup: () -> Unit = {}
+) {
     val context = LocalContext.current
+    remember { ScrcpyPrefs(context).also { it.restoreToGate() } }
     val pipeline = remember { FramePipeline() }
     val sources = remember {
         FeedSourceFactory.all(context).also { FeedSourceFactory.bindAll(it, pipeline) }
@@ -236,6 +242,7 @@ fun MainScreen(onOpenAdvancedHook: () -> Unit = {}) {
                                         is LoopingClipFeedSource -> "LOOPING_CLIP"
                                         is ScreenRegionFeedSource -> "SCREEN_REGION"
                                         is NetworkStreamFeedSource -> "NETWORK_STREAM"
+                                        is ScrcpyFeedSource -> selected.kind.name
                                         else -> "VIDEO_FILE"
                                     }
                                 },
@@ -281,6 +288,8 @@ fun MainScreen(onOpenAdvancedHook: () -> Unit = {}) {
                                     com.victorious.cam.feed.FeedSourceKind.SCREEN_REGION -> "screen_region"
                                     com.victorious.cam.feed.FeedSourceKind.NETWORK_STREAM -> "network_stream"
                                     com.victorious.cam.feed.FeedSourceKind.MULTI_FEED_MIX -> "multi_feed_mix"
+                                    com.victorious.cam.feed.FeedSourceKind.SCRCPY_CAMERA -> "scrcpy_camera"
+                                    com.victorious.cam.feed.FeedSourceKind.SCRCPY_SCREEN_MIRROR -> "scrcpy_screen_mirror"
                                 }
                             }) {
                             null -> error = "Preset source missing"
@@ -312,6 +321,9 @@ fun MainScreen(onOpenAdvancedHook: () -> Unit = {}) {
         }
 
         Spacer(Modifier.height(8.dp))
+        OutlinedButton(onClick = onOpenScrcpySetup, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.scrcpy_setup_open))
+        }
         OutlinedButton(onClick = onOpenAdvancedHook, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.hook_optin_open))
         }

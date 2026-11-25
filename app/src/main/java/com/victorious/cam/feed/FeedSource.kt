@@ -33,7 +33,17 @@ enum class FeedSourceKind {
     SCREEN_REGION,
     NETWORK_STREAM,
     /** Logical multi-source PiP / grid mixer output. */
-    MULTI_FEED_MIX
+    MULTI_FEED_MIX,
+    /**
+     * Optional PC-side path: phone camera via scrcpy 2.x + v4l2loopback.
+     * Does not push frames into the on-device [FramePipeline].
+     */
+    SCRCPY_CAMERA,
+    /**
+     * Optional PC-side path: phone screen-mirror via scrcpy + v4l2loopback.
+     * Does not push frames into the on-device [FramePipeline].
+     */
+    SCRCPY_SCREEN_MIRROR
 }
 
 fun FeedSourceKind.toDefaultId(): String = when (this) {
@@ -43,4 +53,6 @@ fun FeedSourceKind.toDefaultId(): String = when (this) {
     FeedSourceKind.SCREEN_REGION -> "screen_region"
     FeedSourceKind.NETWORK_STREAM -> "network_stream"
     FeedSourceKind.MULTI_FEED_MIX -> "multi_feed_mix"
+    FeedSourceKind.SCRCPY_CAMERA -> "scrcpy_camera"
+    FeedSourceKind.SCRCPY_SCREEN_MIRROR -> "scrcpy_screen_mirror"
 }
