@@ -234,17 +234,14 @@ fun MainScreen(
                         repo.save(
                             FeedPreset(
                                 name = presetName.ifBlank { "Preset" },
-                                sourceKind = selected.id.uppercase().let {
-                                    // map id to enum name
-                                    when (selected) {
-                                        is VideoFileFeedSource -> "VIDEO_FILE"
-                                        is ImageFeedSource -> "IMAGE"
-                                        is LoopingClipFeedSource -> "LOOPING_CLIP"
-                                        is ScreenRegionFeedSource -> "SCREEN_REGION"
-                                        is NetworkStreamFeedSource -> "NETWORK_STREAM"
-                                        is ScrcpyFeedSource -> selected.kind.name
-                                        else -> "VIDEO_FILE"
-                                    }
+                                sourceKind = when (val current = selected) {
+                                    is VideoFileFeedSource -> "VIDEO_FILE"
+                                    is ImageFeedSource -> "IMAGE"
+                                    is LoopingClipFeedSource -> "LOOPING_CLIP"
+                                    is ScreenRegionFeedSource -> "SCREEN_REGION"
+                                    is NetworkStreamFeedSource -> "NETWORK_STREAM"
+                                    is ScrcpyFeedSource -> current.kind.name
+                                    else -> "VIDEO_FILE"
                                 },
                                 sourceUri = when (selected) {
                                     is NetworkStreamFeedSource -> networkUrl
