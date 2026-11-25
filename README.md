@@ -47,6 +47,21 @@ OFF by default. Cross-process frames use versioned `SharedFrameTransport` (backp
 - **Hardcoded denylist** refuses banking, payment, government ID, and KYC packages
 - Virtual mic system inject: [docs/VIRTUAL_MIC.md](docs/VIRTUAL_MIC.md) (stock limitation unchanged without root)
 
+## Optional root module (Magisk / KernelSU / APatch)
+
+OFF by default, and **the app works fully without it**. A Magisk-format
+module under [`module/`](module/) can install VictorCam as a privileged
+system app (`/system/priv-app`) and pre-grant the runtime permissions it
+already declares.
+
+It does **not** weaken the banking / payment / government-ID / KYC
+denylist, hide root, spoof device integrity, or add fraud/KYC features.
+Hard warnings and a full does / does not list:
+[module/README.md](module/README.md).
+
+CI packs a flashable zip (with the debug APK) as the
+`victorcam-root-module` artifact.
+
 ## Build
 
 ```bash

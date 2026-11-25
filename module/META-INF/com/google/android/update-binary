@@ -1,0 +1,43 @@
+#!/sbin/sh
+
+#################
+# Initialization
+#################
+
+umask 022
+
+# echo before loading util_functions
+ui_print() { echo "$1"; }
+
+require_new_magisk() {
+  ui_print "*******************************"
+  ui_print " Please install Magisk v20.4+! "
+  ui_print "*******************************"
+  exit 1
+}
+
+#########################
+# Load util_functions.sh
+#########################
+
+OUTFD=$2
+ZIPFILE=$3
+
+mount /data 2>/dev/null
+
+# Official Magisk installer path (Magisk project, GPL-3.0).
+if [ -f /data/adb/magisk/util_functions.sh ]; then
+  . /data/adb/magisk/util_functions.sh
+  [ "$MAGISK_VER_CODE" -lt 20400 ] && require_new_magisk
+  install_module
+  exit 0
+fi
+
+# KernelSU and APatch managers install Magisk-format zips themselves.
+# Recovery flash without Magisk is not supported.
+ui_print "**********************************************"
+ui_print " No Magisk util_functions.sh found."
+ui_print " For KernelSU or APatch, install this zip"
+ui_print " from the manager app, not from recovery."
+ui_print "**********************************************"
+exit 1

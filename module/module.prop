@@ -1,0 +1,6 @@
+id=victorcam
+name=VictorCam Privileged Install
+version=v0.4.0
+versionCode=4
+author=Victorious Labs
+description=Optional. Installs VictorCam (com.victorious.cam) as a priv-app and pre-grants its declared runtime permissions. The app works without this module. Does not bypass the banking/payment/gov-ID/KYC denylist and is not a root-hide module.
