@@ -10,11 +10,13 @@ import com.victorious.cam.data.DisclosurePrefs
 import com.victorious.cam.ui.screens.AdvancedHookOptInScreen
 import com.victorious.cam.ui.screens.DisclosureScreen
 import com.victorious.cam.ui.screens.MainScreen
+import com.victorious.cam.ui.screens.ScrcpySetupScreen
 
 object Routes {
     const val DISCLOSURE = "disclosure"
     const val MAIN = "main"
     const val ADVANCED_HOOK = "advanced_hook"
+    const val SCRCPY_SETUP = "scrcpy_setup"
 }
 
 @Composable
@@ -36,10 +38,16 @@ fun VictorCamNav() {
             )
         }
         composable(Routes.MAIN) {
-            MainScreen(onOpenAdvancedHook = { nav.navigate(Routes.ADVANCED_HOOK) })
+            MainScreen(
+                onOpenAdvancedHook = { nav.navigate(Routes.ADVANCED_HOOK) },
+                onOpenScrcpySetup = { nav.navigate(Routes.SCRCPY_SETUP) }
+            )
         }
         composable(Routes.ADVANCED_HOOK) {
             AdvancedHookOptInScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.SCRCPY_SETUP) {
+            ScrcpySetupScreen(onBack = { nav.popBackStack() })
         }
     }
 }

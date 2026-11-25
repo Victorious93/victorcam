@@ -34,6 +34,7 @@ An OBS-style **virtual camera feed** for Android (Camera2 / CameraX consumers). 
 | Screen region | MediaProjection + foreground service + crop rectangle |
 | Network stream | RTSP / HTTP(S) / HLS / RTMP; SRT as MPEG-TS over UDP; NDI-over-RTP fallback |
 | Multi-feed picture-in-picture | `MultiFeedMixer` composes two or more sources into the pipeline, overlays and recorder |
+| Phone camera / screen via scrcpy (optional, off by default) | Linux PC helper: scrcpy 2.x `--video-source=camera` or `display` plus v4l2loopback. Does **not** feed the on-device pipeline. See [docs/SCRCPY.md](docs/SCRCPY.md). |
 
 Overlays (text, logo, timestamp) are composited onto frames. Feed presets persist in Room. `CaptureHandlerActivity` handles the `IMAGE_CAPTURE`, `VIDEO_CAPTURE` and `STILL_IMAGE_CAMERA` camera intents. The code also contains recording, scheduling, backup and a read-only VictorLaunch fleet theme client.
 
@@ -54,6 +55,14 @@ Off by default. Cross-process frames use a versioned `SharedFrameTransport` with
 - Per-app allow list only.
 - A **hardcoded denylist** refuses banking, payment, government-ID and KYC packages.
 - System-wide virtual microphone injection: see [docs/VIRTUAL_MIC.md](docs/VIRTUAL_MIC.md) (the stock limitation is unchanged without root).
+
+### Optional path: phone camera via scrcpy
+
+Off by default. A Linux PC helper (`scripts/victorcam-scrcpy.sh`) can present this phone's camera (scrcpy 2.x `--video-source=camera`, Android 12+) or screen (`--video-source=display`) as a v4l2loopback webcam. In-app setup: **Phone camera via scrcpy (optional)**.
+
+This does not inject frames into VictorCam's on-device virtual camera pipeline. scrcpy is not bundled.
+
+Credit: [scrcpy](https://github.com/Genymobile/scrcpy) by Genymobile and contributors, licensed under the Apache License 2.0. See [NOTICE](NOTICE).
 
 ## Install
 
