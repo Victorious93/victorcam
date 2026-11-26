@@ -7,6 +7,7 @@ import com.victorious.cam.feed.LoopingClipFeedSource
 import com.victorious.cam.feed.ScreenRegionFeedSource
 import com.victorious.cam.feed.VideoFileFeedSource
 import com.victorious.cam.network.NetworkStreamFeedSource
+import com.victorious.cam.scrcpy.ScrcpyFeedSource
 import com.victorious.cam.pipeline.FramePipeline
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -17,11 +18,19 @@ import org.junit.Test
 class FeedSourceTest {
 
     @Test
-    fun factoryCreatesFiveSources() {
+    fun factoryCreatesSevenSources() {
         val all = FeedSourceFactory.all(context = null)
-        assertEquals(5, all.size)
+        assertEquals(7, all.size)
         assertEquals(
-            setOf("video_file", "image", "looping_clip", "screen_region", "network_stream"),
+            setOf(
+                "video_file",
+                "image",
+                "looping_clip",
+                "screen_region",
+                "network_stream",
+                "scrcpy_camera",
+                "scrcpy_screen_mirror"
+            ),
             all.map { it.id }.toSet()
         )
     }
@@ -88,5 +97,7 @@ class FeedSourceTest {
         assertTrue(FeedSourceFactory.create(FeedSourceKind.LOOPING_CLIP) is LoopingClipFeedSource)
         assertTrue(FeedSourceFactory.create(FeedSourceKind.SCREEN_REGION) is ScreenRegionFeedSource)
         assertTrue(FeedSourceFactory.create(FeedSourceKind.NETWORK_STREAM) is NetworkStreamFeedSource)
+        assertTrue(FeedSourceFactory.create(FeedSourceKind.SCRCPY_CAMERA) is ScrcpyFeedSource)
+        assertTrue(FeedSourceFactory.create(FeedSourceKind.SCRCPY_SCREEN_MIRROR) is ScrcpyFeedSource)
     }
 }

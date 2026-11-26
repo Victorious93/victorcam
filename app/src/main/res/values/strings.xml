@@ -33,5 +33,9 @@
     <string name="feed_switch_text">Active preset: %1$s</string>
     <string name="feed_switch_next">Next</string>
     <string name="feed_switch_prev">Prev</string>
+    <string name="scrcpy_setup_title">Phone camera via scrcpy (optional)</string>
+    <string name="scrcpy_setup_open">Phone camera via scrcpy (optional)</string>
+    <string name="scrcpy_setup_body">"Optional, OFF by default.\n\nThis path uses scrcpy 2.x on a Linux PC with v4l2loopback so this phone's camera (--video-source=camera, Android 12+) or screen (--video-source=display) can appear as a normal webcam (a v4l2 loopback device).\n\nIt does not inject frames into VictorCam's on-device virtual camera pipeline. Capture happens on the PC. scrcpy is not bundled in this app.\n\nUser-owned content only. Not for fraud, KYC/biometric bypass, or impersonation."</string>
+    <string name="scrcpy_setup_credit">Credit: scrcpy by Genymobile and contributors, Apache License 2.0. https://github.com/Genymobile/scrcpy — see NOTICE.</string>
     <string name="audio_limits">Stock Android: audio plays for preview / our capture intents only. System mic replace needs root/LSPosed.</string>
 </resources>
