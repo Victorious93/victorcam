@@ -64,6 +64,21 @@ This does not inject frames into VictorCam's on-device virtual camera pipeline. 
 
 Credit: [scrcpy](https://github.com/Genymobile/scrcpy) by Genymobile and contributors, licensed under the Apache License 2.0. See [NOTICE](NOTICE).
 
+## Optional root module (Magisk / KernelSU / APatch)
+
+OFF by default, and **the app works fully without it**. A Magisk-format
+module under [`module/`](module/) can install VictorCam as a privileged
+system app (`/system/priv-app`) and pre-grant the runtime permissions it
+already declares.
+
+It does **not** weaken the banking / payment / government-ID / KYC
+denylist, hide root, spoof device integrity, or add fraud/KYC features.
+Hard warnings and a full does / does not list:
+[module/README.md](module/README.md).
+
+CI packs a flashable zip (with the debug APK) as the
+`victorcam-root-module` artifact.
+
 ## Install
 
 No release has been published yet. Debug APKs are built by [CI](https://github.com/Victorious93/victorcam/actions/workflows/ci.yml). minSdk 26.

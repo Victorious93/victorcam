@@ -31,3 +31,6 @@ app/build/
 xposed/build/
 **/build/
 .kotlin/
+
+# Packed root-module zip output
+module-dist/

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Allowlist of signature|privileged permissions for com.victorious.cam when
+  installed as a priv-app.
+
+  Honest status: the current VictorCam APK (versionName 0.4.0-features-3,
+  versionCode 4) does not declare any signature|privileged permissions in
+  AndroidManifest.xml. This file still must ship so privileged-permission
+  enforcement does not disable the priv-app.
+
+  Do not add permissions here that the APK does not request. This module
+  does not grant hidden capabilities, hide root, or weaken HookDenylist.
+
+  If a future APK revision requests a privileged permission, add it here
+  only when that request is intentional and documented.
+-->
+<permissions>
+    <privapp-permissions package="com.victorious.cam">
+    </privapp-permissions>
+</permissions>
